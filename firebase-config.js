@@ -1,14 +1,9 @@
-import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  setPersistence,
-  browserLocalPersistence
-} from "firebase/auth";
-import {
-  getFirestore
-} from "firebase/firestore";
+// Firebase configuration for the CVLPC web app
+// This file is safe to include in the browser. Do not put service-account
+// private keys or other server credentials here.
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCHpiAbCeI6kt1WqCGlT9hT4i3hjuLt5Io",
   authDomain: "cvlpc-c9f07.firebaseapp.com",
   projectId: "cvlpc-c9f07",
@@ -17,18 +12,4 @@ const firebaseConfig = {
   appId: "1:700493126900:web:a98cb9ddcbccccb759d2a1"
 };
 
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-setPersistence(auth, browserLocalPersistence).catch((error) => {
-  console.error("Firebase persistence error:", error);
-});
-
-const db = getFirestore(app);
-
-export {
-  app,
-  auth,
-  db
-};
+export const firebaseApp = initializeApp(firebaseConfig);
