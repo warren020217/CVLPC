@@ -20,16 +20,22 @@ service cloud.firestore {
         request.resource.data.phone is string && request.resource.data.phone.size() >= 7 &&
         request.resource.data.date is string && request.resource.data.time is string &&
         request.resource.data.players is string &&
-        request.resource.data.accessCode is string && request.resource.data.accessCode.size() == 8 && reservationId == request.resource.data.accessCode;
+        request.resource.data.accessCode is string && request.resource.data.accessCode.size() == 8 &&
+        reservationId == request.resource.data.accessCode;
 
-      // A player can retrieve a reservation only when the document ID is the access code.
-      // Confirmed reservations are also readable for the public booking board.
-      allow get: if isAdmin() || resource.data.status == 'Confirmed' || resource.data.accessCode == reservationId;
-      allow list: if isAdmin() || resource.data.status == 'Confirmed';
+      // Players can view their own reservation by access code.
+      // The public booking board may list only Pending or Confirmed reservations.
+      allow get: if isAdmin() ||
+        resource.data.status in ['Pending','pending','Confirmed','confirmed'] &&
+        (resource.data.accessCode == reservationId || isAdmin());
+
+      allow list: if isAdmin() ||
+        resource.data.status in ['Pending','pending','Confirmed','confirmed'];
 
       allow update: if isAdmin() &&
         request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(['status','approvedAt','rejectedAt','adminNote','updatedAt']);
+
       allow delete: if isAdmin();
     }
   }
