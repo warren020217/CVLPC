@@ -28,6 +28,7 @@ service cloud.firestore {
       allow list: if isAdmin() || resource.data.status == 'Confirmed';
 
       allow update: if isAdmin() &&
+        request.resource.data.status in ['Pending','Confirmed','Declined','Cancelled','Completed'] &&
         request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(['status','approvedAt','rejectedAt','adminNote','updatedAt']);
       allow delete: if isAdmin();
