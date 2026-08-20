@@ -4,361 +4,121 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#061b26">
-<meta name="description" content="Camp Vicente Lim Pickleball Club - CVLPC">
+<meta name="description" content="Camp Vicente Lim Pickleball Club - CVLPC reservations">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="favicon.ico">
+<link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Camp Vicente Lim Pickleball Club - CVLPC</title>
 <style>
-:root{--navy:#061b26;--lime:#82d400;--blue:#0861b7;--orange:#ed7014}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#172229;background:#061b26}
-button,input,select{font:inherit}button{cursor:pointer}
-#backgrounds{position:fixed;inset:0;z-index:-10;overflow:hidden;background:#061b26}
-.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity 1s ease}
-.bg.on{opacity:.30}
-.bgshade{position:absolute;inset:0;background:rgba(3,20,29,.34);z-index:2}
-header{position:sticky;top:0;z-index:50;background:rgba(3,21,31,.97);height:72px;box-shadow:0 2px 12px #0005}
-.nav{max-width:1320px;height:100%;margin:auto;padding:0 18px;display:flex;align-items:center;gap:16px}
-.brand{display:flex;align-items:center;gap:10px;min-width:380px}
-.logo{width:55px;height:55px;object-fit:contain;filter:drop-shadow(0 3px 8px #0008)}
-.brandtext{color:#fff;font-size:18px;line-height:.96;font-weight:900}
-.brandtext span{color:#6ec5ff;font-size:11px;letter-spacing:2px}
-.navlinks{margin-left:auto;display:flex;align-items:center;gap:18px}
-.navlinks button,.mobile button{border:0;background:none;color:#fff;font-weight:900;padding:10px 4px}
-.navlinks button:hover,.mobile button:hover{text-decoration:underline}
-.reserveTop{background:var(--lime)!important;color:#163000!important;border-radius:8px!important;padding:12px 18px!important}
-.menuBtn{display:none;margin-left:auto;background:none;border:0;color:#fff;font-size:31px}
-.mobile{display:none;position:absolute;right:10px;top:68px;width:240px;background:#061b26;border:1px solid #ffffff22;border-radius:12px;padding:8px;box-shadow:0 12px 30px #0008}
-.mobile button{display:block;width:100%;text-align:left;padding:13px;border-radius:7px}
-main{max-width:1320px;margin:auto}
-.hero{min-height:535px;padding:54px 52px 25px;display:grid;grid-template-columns:1.18fr .82fr;align-items:center}
-.hero h1{font-size:clamp(55px,7vw,92px);line-height:.88;letter-spacing:-4px;color:#fff;margin:0;text-shadow:0 5px 15px #000b;font-weight:1000}
-.hero h1 span{color:var(--lime)}
-.hero p{font-size:19px;line-height:1.4;color:#fff;font-weight:700;max-width:700px;text-shadow:0 2px 7px #000}
-.location{display:flex;gap:12px;align-items:center;background:#041b29e8;border:1px solid #ffffff22;color:#fff;border-radius:12px;padding:12px 16px;width:max-content;max-width:100%;margin-top:18px}
-.location strong{color:var(--lime);font-size:19px;display:block}.location small{display:block;margin-top:3px}.pin{font-size:28px}
-.features{display:flex;gap:26px;margin-top:24px;color:#fff}.feature{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900}
-.fi{width:43px;height:43px;background:var(--lime);border-radius:50%;display:grid;place-items:center;color:#fff}
-.heroLogo{display:flex;justify-content:center}.heroLogo img{width:min(350px,80%);filter:drop-shadow(0 16px 25px #0009)}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;padding:0 36px 40px}
-.card{background:#fffffff2;border-radius:16px;padding:23px;min-height:265px;box-shadow:0 15px 35px #0006}
-.card.dark{background:#041b29ee;color:#fff}.icon{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:23px;font-weight:900}
-.green .icon{background:var(--lime)}.blue .icon{background:var(--blue)}.orange .icon{background:var(--orange)}
-.card h2{margin:10px 0 8px;font-size:23px}.green h2{color:#589500}.blue h2{color:#075dab}.orange h2{color:#df6512}.dark h2{color:#fff}
-.card p{line-height:1.45;margin:0 0 18px}.btn{border:0;border-radius:8px;padding:12px 15px;font-weight:900;width:100%}
-.greenBtn{background:var(--lime);color:#183000}.blueBtn{background:var(--blue);color:#fff}.orangeBtn{background:var(--orange);color:#fff}.outline{background:transparent;color:var(--lime);border:1px solid var(--lime)}
-.book{padding:9px 0;border-bottom:1px solid #ffffff22;font-size:12px;display:flex;justify-content:space-between;gap:10px}.book:last-child{border-bottom:0}
-.badge{font-size:9px;padding:4px 6px;border-radius:4px;color:#fff;font-weight:900}.Confirmed{background:#55a900}.Pending{background:#d99000}.Declined{background:#b83e35}.Cancelled{background:#666}.Completed{background:#3977a8}
-.statusCard{margin-top:14px;border:1px solid #dbe2e5;border-radius:12px;padding:16px;background:#f8fafb}
-.statusTitle{font-size:12px;font-weight:900;letter-spacing:.8px;color:#64727a}.statusValue{display:inline-block;margin:7px 0 12px;padding:7px 11px;border-radius:7px;color:#fff;font-size:12px;font-weight:900}
-.resMeta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}.resMeta div{background:#fff;border:1px solid #e2e7e9;border-radius:8px;padding:9px}.resMeta small{display:block;color:#69757a;font-size:10px;text-transform:uppercase;font-weight:800}.resMeta b{display:block;margin-top:3px}
-.section{padding:30px 36px 55px}.section h2{color:#fff;font-size:32px;text-shadow:0 3px 9px #000;margin:0 0 15px}
-.panel{background:#fffffff5;border-radius:16px;padding:25px;box-shadow:0 14px 35px #0006}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field label{display:block;font-weight:800;margin-bottom:5px}.field input,.field select{width:100%;padding:12px;border:1px solid #ccd5d9;border-radius:8px;background:#fff}
-.notice{display:none;padding:12px;border-radius:8px;margin-bottom:13px;background:#eaf8dc;color:#315f05;font-weight:700}.notice.err{background:#fde7e4;color:#8a342e}
-.modal{position:fixed;inset:0;z-index:100;background:#000b;display:grid;place-items:center;padding:15px}.modal.hide{display:none}
-.modalBox{background:#fff;border-radius:16px;width:min(820px,100%);max-height:90vh;overflow:auto;padding:23px}.modalHead{display:flex;justify-content:space-between;align-items:center}.close{border:0;border-radius:7px;padding:8px 11px}
-.adminRow{border:1px solid #dbe2e5;border-radius:9px;padding:12px;margin:8px 0;display:flex;justify-content:space-between;gap:12px}.adminBtns{display:flex;gap:6px;align-items:center}.small{border:0;border-radius:6px;padding:8px 10px;font-weight:800}
-.result{margin-top:13px;padding:13px;border-radius:9px;background:#eef2f3}
-footer{background:#03151f;color:#fff;text-align:center;padding:28px}footer span{color:var(--lime)}
-@media(max-width:1050px){.brand{min-width:300px}.cards{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:720px){
-header{height:66px}.nav{padding:0 10px}.brand{min-width:0}.logo{width:49px;height:49px}.brandtext{font-size:13px}.brandtext span{font-size:9px}.navlinks{display:none}.menuBtn{display:block}
-.mobile.show{display:block}.hero{display:block;padding:40px 15px 24px;min-height:auto}.hero h1{font-size:54px;letter-spacing:-3px}.hero p{font-size:17px}.heroLogo{display:none}
-.location{width:100%}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.feature{flex-direction:column;text-align:center;font-size:10px}.fi{width:44px;height:44px}
-.cards{grid-template-columns:1fr;padding:0 10px 30px}.card{min-height:0}.section{padding:25px 10px 45px}.grid{grid-template-columns:1fr}.adminRow{flex-direction:column}.adminBtns{width:100%}.adminBtns button{flex:1}
-}
+:root{--blue:#0758a7;--lime:#83d400;--orange:#ed6c17;--navy:#041a27;--ink:#17232a;--muted:#5d686d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#061b26;overflow-x:hidden}
+#bgLayer{position:fixed;inset:0;z-index:-3;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:.30;transition:opacity .35s ease;background-image:url('cvlpc-bg-1.jpg')}
+#bgShade{position:fixed;inset:0;z-index:-2;pointer-events:none;background:linear-gradient(180deg,rgba(2,18,28,.25),rgba(2,18,28,.12) 48%,rgba(2,18,28,.30))}
+button,input,select{font:inherit}button{cursor:pointer}.header{position:sticky;top:0;z-index:50;height:78px;background:rgba(3,22,32,.96);backdrop-filter:blur(12px);border-bottom:1px solid #fff2}.nav{width:min(1450px,calc(100% - 34px));height:100%;margin:auto;display:flex;align-items:center;gap:15px}.brand{display:flex;align-items:center;gap:12px;min-width:360px}.logo{width:62px;height:62px;object-fit:contain;filter:drop-shadow(0 4px 12px #0008)}.brand-text{color:#fff;font-size:21px;font-weight:900;line-height:1.05}.brand-text span{display:block;color:#6ac7ff;font-size:13px;letter-spacing:1.8px;margin-top:3px}.links{margin-left:auto;display:flex;align-items:center;gap:25px}.links button,.mobile-menu button{border:0;background:none;color:#fff;font-weight:900}.links button{padding:28px 0;position:relative}.links button.active:after{content:"";position:absolute;left:0;right:0;bottom:15px;height:3px;background:var(--lime);border-radius:4px}.top-reserve{background:var(--lime)!important;color:#173000!important;padding:12px 17px!important;border-radius:8px}.menu{display:none;margin-left:auto;border:0;background:none;color:#fff;font-size:32px}.mobile-menu{display:none;position:absolute;right:8px;top:68px;width:250px;background:#041620;border-radius:11px;padding:8px;box-shadow:0 15px 35px #0008}.mobile-menu button{display:block;width:100%;text-align:left;padding:13px;border-radius:7px}.mobile-menu button:hover{background:#ffffff12}
+.wrap{width:min(1450px,calc(100% - 34px));margin:auto}.hero{min-height:570px;padding:52px 72px 30px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:20px}.hero h1{margin:0;color:#fff;font-size:clamp(52px,6vw,92px);line-height:.9;letter-spacing:-3px;font-weight:1000;text-shadow:0 5px 18px #000b}.hero h1 span{color:var(--lime)}.hero p{max-width:700px;color:#fff;font-size:21px;line-height:1.4;font-weight:700;text-shadow:0 3px 8px #000b}.hero-logo{display:flex;justify-content:center}.hero-logo img{width:min(330px,30vw);aspect-ratio:1;object-fit:contain;filter:drop-shadow(0 18px 35px #0009)}.location{display:flex;align-items:center;gap:12px;max-width:100%;width:max-content;background:rgba(3,22,32,.9);border:1px solid #fff2;border-radius:14px;padding:13px 18px;color:#fff}.pin{font-size:30px}.location strong{display:block;color:#72d019;font-size:20px}.location small{display:block;margin-top:3px}.features{display:flex;gap:30px;margin-top:25px;color:#fff}.feature{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:900}.feature-icon{width:46px;height:46px;border-radius:50%;background:var(--lime);display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 6px 15px #0005}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:8px 55px 38px}.card{background:rgba(255,255,255,.96);border-radius:17px;padding:23px 24px;box-shadow:0 16px 38px #0005;min-height:275px}.card-icon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:25px;margin-bottom:12px}.card h2{margin:0 0 9px;font-size:24px}.card p{line-height:1.45;margin:0 0 18px}.green .card-icon{background:var(--lime)}.green h2{color:#5e9800}.blue .card-icon{background:var(--blue)}.blue h2{color:#075aa8}.orange .card-icon{background:var(--orange)}.orange h2{color:var(--orange)}.dark{background:rgba(3,22,32,.92);color:#fff}.dark h2{color:#fff}.booking{display:flex;justify-content:space-between;gap:9px;padding:10px 0;border-bottom:1px solid #fff2;font-size:12px}.badge{display:inline-block;border-radius:5px;padding:5px 7px;color:#fff;font-size:10px;font-weight:900}.pending{background:#e6a000}.confirmed{background:#72b900}.declined{background:#c54a3a}.cancelled{background:#68757b}.completed{background:#1769aa}
+.btn{border:0;border-radius:8px;padding:12px 17px;font-weight:900}.btn:disabled{opacity:.55;cursor:not-allowed}.wide{width:100%}.green-btn{background:var(--lime);color:#173000}.blue-btn{background:var(--blue);color:#fff}.orange-btn{background:var(--orange);color:#fff}.outline{background:transparent;color:var(--lime);border:1px solid var(--lime)}
+.section{padding:30px 55px 60px}.section>h2{color:#fff;text-shadow:0 3px 10px #000;font-size:34px}.panel{background:rgba(255,255,255,.96);border-radius:17px;padding:27px;box-shadow:0 15px 40px #0005}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.group label{display:block;font-weight:800;margin-bottom:6px}.group input,.group select{width:100%;padding:12px;border:1px solid #ccd6da;border-radius:8px;background:#fff}.notice{display:none;padding:14px;border-radius:8px;background:#e9f6dc;color:#315e09;margin-bottom:14px;font-weight:700}.notice.error{background:#fde7e5;color:#8a392f}.hint{color:var(--muted);font-size:13px;line-height:1.5}
+.modal{position:fixed;inset:0;z-index:100;background:#000b;display:grid;place-items:center;padding:18px}.modal.hidden{display:none}.modal-box{width:min(850px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:17px;padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center}.close{border:0;background:#e9eef0;border-radius:8px;padding:8px 10px}.admin-row{border:1px solid #dce4e7;border-radius:10px;padding:13px;margin:9px 0;display:flex;justify-content:space-between;gap:15px}.small{border:0;border-radius:7px;padding:8px 10px;font-weight:800}.my-card{padding:14px;background:#f1f4f5;border-radius:9px;margin-top:9px}.status-box{padding:15px;border-radius:12px;margin-top:12px;background:#f7fafb}.footer{background:rgba(2,18,27,.97);color:#fff;text-align:center;padding:28px}.footer span{color:var(--lime)}
+@media(max-width:1100px){.links{gap:14px}.brand{min-width:290px}.cards{grid-template-columns:repeat(2,1fr);padding-left:25px;padding-right:25px}.hero{padding-left:30px;padding-right:30px}}
+@media(max-width:760px){.header{height:68px}.nav{width:calc(100% - 16px)}.brand{min-width:0;gap:8px}.logo{width:50px;height:50px}.brand-text{font-size:15px}.brand-text span{font-size:9px}.links{display:none}.menu{display:block}.wrap{width:calc(100% - 12px)}.hero{display:block;min-height:auto;padding:38px 16px 25px}.hero h1{font-size:clamp(47px,14vw,66px);letter-spacing:-2px}.hero p{font-size:18px;line-height:1.4}.hero-logo{display:flex;margin:25px 0 5px}.hero-logo img{width:min(240px,70vw)}.location{width:100%;padding:13px}.location strong{font-size:17px}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.feature{flex-direction:column;text-align:center;font-size:10px;gap:6px}.feature-icon{width:46px;height:46px}.cards{grid-template-columns:1fr;padding:8px 9px 28px;gap:15px}.card{min-height:0;padding:23px}.section{padding:23px 9px 45px}.section>h2{font-size:28px}.form-grid{grid-template-columns:1fr}.admin-row{flex-direction:column}.footer{font-size:13px}}
 </style>
 </head>
 <body>
-<div id="backgrounds">
-  <img class="bg on" id="bgA" src="cvlpc-bg-1.jpg" alt="">
-  <img class="bg" id="bgB" src="cvlpc-bg-2.jpg" alt="">
-  <div class="bgshade"></div>
-</div>
-
-<header>
-<div class="nav">
-  <div class="brand">
-    <img class="logo" src="logo-CVLPC.png" alt="CVLPC logo">
-    <div class="brandtext">CAMP VICENTE LIM<br>PICKLEBALL CLUB<br><span>CVLPC</span></div>
-  </div>
-  <div class="navlinks">
-    <button data-go="home">HOME</button>
-    <button data-go="reserve">RESERVE</button>
-    <button data-go="my">MY RESERVATIONS</button>
-    <button data-go="about">ABOUT</button>
-    <button data-go="contact">CONTACT</button>
-    <button class="reserveTop" data-go="reserve">▣ &nbsp; RESERVE NOW</button>
-  </div>
-  <button class="menuBtn" id="menuBtn" aria-label="Menu">☰</button>
-</div>
-<div class="mobile" id="mobile">
-  <button data-go="home">HOME</button><button data-go="reserve">RESERVE</button>
-  <button data-go="my">MY RESERVATIONS</button><button data-go="about">ABOUT</button>
-  <button data-go="contact">CONTACT</button><button data-go="admin">ADMIN LOGIN</button>
-</div>
-</header>
-
-<main>
-<section id="home" class="hero">
-<div>
-<h1>PLAY.<br>RESERVE.<br><span>HAVE FUN!</span></h1>
-<p>Welcome to Camp Vicente Lim Pickleball Club. Reserve your playing schedule and enjoy the game with fellow players.</p>
-<div class="location"><div class="pin">📍</div><div><strong>CAMP VICENTE LIM</strong><small>Calamba, Laguna · Location can be updated later.</small></div></div>
-<div class="features">
-<div class="feature"><div class="fi">▣</div>EASY<br>RESERVATION</div>
-<div class="feature"><div class="fi">✓</div>SECURE &amp;<br>SAFE</div>
-<div class="feature"><div class="fi">••</div>PLAY WITH<br>EVERYONE</div>
-</div>
-</div>
-<div class="heroLogo"><img src="logo-CVLPC.png" alt="CVLPC logo"></div>
-</section>
-
-<section class="cards">
-<article class="card green"><div class="icon">●</div><h2>REGISTER</h2><p>Enter your name, email and contact number to reserve a playing schedule.</p><button class="btn greenBtn" data-go="reserve">REGISTER NOW</button></article>
-<article class="card blue"><div class="icon">▣</div><h2>RESERVE</h2><p>Choose your preferred date, time and number of players.</p><button class="btn blueBtn" data-go="reserve">▣ &nbsp; RESERVE A COURT</button></article>
-<article class="card orange"><div class="icon">✓</div><h2>FOR ADMINISTRATORS</h2><p>Review reservation requests and approve or reject bookings.</p><button class="btn orangeBtn" data-go="admin">🔒 &nbsp; ADMIN LOGIN</button></article>
-<article class="card dark"><h2>▣ &nbsp; APPROVED BOOKINGS</h2><div id="recent">Loading approved bookings...</div><button class="btn outline" id="refreshBtn" style="margin-top:9px">REFRESH</button></article>
-</section>
-
-<section id="reserve" class="section">
-<h2>RESERVE A COURT</h2><div class="panel">
-<div id="notice" class="notice"></div>
-<form id="reservationForm">
-<div class="grid">
-<div class="field"><label>Full Name</label><input id="name" required maxlength="80"></div>
-<div class="field"><label>Email Address</label><input id="email" type="email" required maxlength="120"></div>
-<div class="field"><label>Contact Number</label><input id="phone" required maxlength="20"></div>
-<div class="field"><label>Date</label><input id="date" type="date" required></div>
-<div class="field"><label>Preferred Time</label><select id="time" required><option value="">Select time</option><option>7:00 AM - 8:00 AM</option><option>8:00 AM - 9:00 AM</option><option>9:00 AM - 10:00 AM</option><option>10:00 AM - 11:00 AM</option><option>1:00 PM - 2:00 PM</option><option>2:00 PM - 3:00 PM</option><option>3:00 PM - 4:00 PM</option><option>4:00 PM - 5:00 PM</option><option>5:00 PM - 6:00 PM</option><option>6:00 PM - 7:00 PM</option><option>7:00 PM - 8:00 PM</option></select></div>
-<div class="field"><label>Number of Players</label><select id="players" required><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div>
-</div>
-<button class="btn greenBtn" id="submitBtn" style="margin-top:16px">SUBMIT RESERVATION</button>
-</form>
-<p style="color:#5b666b;font-size:13px">Save the access code shown after submission. It lets you check your reservation status.</p>
-</div>
-</section>
-
-<section id="about" class="section"><h2>ABOUT CVLPC</h2><div class="panel"><p>Camp Vicente Lim Pickleball Club is a community for players who want to play, meet other players, and keep the game going.</p></div></section>
-<section id="contact" class="section"><h2>CONTACT</h2><div class="panel"><p><b>Camp Vicente Lim Pickleball Club - CVLPC</b><br>Camp Vicente Lim, Calamba, Laguna</p></div></section>
+<div id="bgLayer" aria-hidden="true"></div><div id="bgShade" aria-hidden="true"></div>
+<header class="header"><div class="nav"><div class="brand"><img class="logo" src="logo-CVLPC.png" alt="CVLPC logo"><div class="brand-text">CAMP VICENTE LIM<br>PICKLEBALL CLUB <span>CVLPC</span></div></div><nav class="links" aria-label="Main navigation"><button class="active" data-nav="home" onclick="home()">HOME</button><button data-nav="reserveSection" onclick="go('reserveSection')">RESERVE</button><button onclick="openMy()">MY RESERVATIONS</button><button data-nav="aboutSection" onclick="go('aboutSection')">ABOUT</button><button data-nav="contactSection" onclick="go('contactSection')">CONTACT</button><button class="top-reserve" onclick="go('reserveSection')">▣ &nbsp; RESERVE NOW</button></nav><button class="menu" aria-label="Open menu" onclick="toggleMenu()">☰</button></div><div id="mobileMenu" class="mobile-menu"><button onclick="home();toggleMenu()">HOME</button><button onclick="go('reserveSection');toggleMenu()">RESERVE</button><button onclick="openMy();toggleMenu()">MY RESERVATIONS</button><button onclick="go('aboutSection');toggleMenu()">ABOUT</button><button onclick="go('contactSection');toggleMenu()">CONTACT</button></div></header>
+<main class="wrap">
+<section id="home" class="hero"><div><h1>PLAY. RESERVE.<br><span>HAVE FUN!</span></h1><p>Welcome to Camp Vicente Lim Pickleball Club. Reserve your playing schedule and enjoy the game with fellow players.</p><div class="location"><div class="pin">📍</div><div><strong>CAMP VICENTE LIM</strong><small>Calamba, Laguna · Location can be updated later.</small></div></div><div class="features"><div class="feature"><div class="feature-icon">▣</div><span>EASY<br>RESERVATION</span></div><div class="feature"><div class="feature-icon">✓</div><span>SECURE &amp;<br>SAFE</span></div><div class="feature"><div class="feature-icon">●●</div><span>PLAY WITH<br>EVERYONE</span></div></div></div><div class="hero-logo"><img src="logo-CVLPC.png" alt="Camp Vicente Lim Pickleball Club logo"></div></section>
+<section class="cards"><article class="card green"><div class="card-icon">●</div><h2>REGISTER</h2><p>Enter your name, email and contact number to reserve a playing schedule.</p><button class="btn green-btn wide" onclick="go('reserveSection')">REGISTER NOW</button></article><article class="card blue"><div class="card-icon">▣</div><h2>RESERVE</h2><p>Choose your date, time and number of players.</p><button class="btn blue-btn wide" onclick="go('reserveSection')">▣ &nbsp; RESERVE A COURT</button></article><article class="card orange"><div class="card-icon">✓</div><h2>FOR ADMINISTRATORS</h2><p>Review reservation requests and confirm or decline bookings.</p><button class="btn orange-btn wide" onclick="openAdmin()">🔒 &nbsp; ADMIN LOGIN</button></article><article class="card dark"><h2>▣ &nbsp; CONFIRMED BOOKINGS</h2><div id="recent"><div style="opacity:.7;font-size:13px">Loading confirmed bookings...</div></div><button class="btn outline wide" style="margin-top:10px" onclick="refreshApproved()">REFRESH</button></article></section>
+<section id="reserveSection" class="section"><h2>RESERVE A COURT</h2><div class="panel"><div id="notice" class="notice"></div><form id="reservationForm"><div class="form-grid"><div class="group"><label for="name">Full Name</label><input id="name" required maxlength="80" autocomplete="name" placeholder="Juan Dela Cruz"></div><div class="group"><label for="email">Email Address</label><input id="email" type="email" required maxlength="120" autocomplete="email" placeholder="you@example.com"></div><div class="group"><label for="phone">Contact Number</label><input id="phone" required maxlength="20" autocomplete="tel" placeholder="09XXXXXXXXX"></div><div class="group"><label for="date">Date</label><input id="date" type="date" required></div><div class="group"><label for="time">Preferred Time</label><select id="time" required><option value="">Select time</option><option>7:00 AM - 8:00 AM</option><option>8:00 AM - 9:00 AM</option><option>9:00 AM - 10:00 AM</option><option>10:00 AM - 11:00 AM</option><option>1:00 PM - 2:00 PM</option><option>2:00 PM - 3:00 PM</option><option>3:00 PM - 4:00 PM</option><option>4:00 PM - 5:00 PM</option><option>5:00 PM - 6:00 PM</option><option>6:00 PM - 7:00 PM</option><option>7:00 PM - 8:00 PM</option></select></div><div class="group"><label for="players">Number of Players</label><select id="players" required><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></div></div><button id="submitReservation" class="btn green-btn" style="margin-top:17px" type="submit">SUBMIT RESERVATION</button><p class="hint">Your reservation starts as <b>Pending</b>. After the administrator reviews it, the status becomes <b>Confirmed</b> or <b>Declined</b>. Keep your reservation number and access code.</p></form></div></section>
+<section id="aboutSection" class="section"><h2>ABOUT CVLPC</h2><div class="panel"><p style="font-size:18px;line-height:1.6;margin:0">Camp Vicente Lim Pickleball Club - CVLPC is a community-focused pickleball club for players who want a simple way to reserve playing schedules, meet fellow players, and keep the game organized.</p></div></section>
+<section id="contactSection" class="section"><h2>CONTACT</h2><div class="panel"><p style="font-size:18px;line-height:1.6;margin:0"><b>Camp Vicente Lim Pickleball Club - CVLPC</b><br>Camp Vicente Lim<br><br>For reservations and club inquiries, use the reservation form or the club's official social page.</p></div></section>
 </main>
-<footer><b>GOOD GAME. GREAT PEOPLE. THAT'S <span>CVLPC.</span></b><br><small>Let's keep the game going!</small></footer>
-
-<div id="adminModal" class="modal hide"><div class="modalBox"><div class="modalHead"><h2>Administrator Login</h2><button class="close" data-close="adminModal">Close</button></div>
-<div id="loginBox"><p>Sign in with your Firebase administrator account.</p><input id="adminEmail" type="email" placeholder="Admin email" style="width:100%;padding:12px;margin-bottom:8px"><input id="adminPassword" type="password" placeholder="Password" style="width:100%;padding:12px"><button class="btn orangeBtn" id="loginBtn" style="margin-top:10px">SIGN IN</button><p id="loginError"></p></div>
-<div id="adminBox" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Reservation Requests</h3><button class="small" id="logoutBtn">SIGN OUT</button></div><div id="adminList"></div></div>
-</div></div>
-
-<div id="myModal" class="modal hide"><div class="modalBox"><div class="modalHead"><h2>My Reservation</h2><button class="close" data-close="myModal">Close</button></div>
-<p>Enter your reservation number or access code to view your reservation.</p>
-<input id="lookupCode" maxlength="24" placeholder="Reservation No. or Access Code" style="width:100%;padding:12px;text-transform:uppercase">
-<button class="btn blueBtn" id="lookupBtn" style="margin-top:10px">VIEW RESERVATION</button>
-<div id="myResult"><div class="result">Your reservation details will appear here.</div></div>
-</div></div>
-
+<footer class="footer">Good game, great people. That's <span>CVLPC</span>.<br><small>Camp Vicente Lim Pickleball Club</small></footer>
+<div id="adminModal" class="modal hidden"><div class="modal-box"><div class="modal-head"><h2>Administrator Login</h2><button class="close" onclick="closeModal('adminModal')">Close</button></div><div id="loginBox"><p>Sign in with the Firebase administrator account.</p><input id="adminEmail" type="email" placeholder="Admin email" style="width:100%;padding:12px;border:1px solid #ccd5d8;border-radius:8px;margin-bottom:9px"><input id="adminPassword" type="password" placeholder="Password" style="width:100%;padding:12px;border:1px solid #ccd5d8;border-radius:8px"><button class="btn orange-btn" style="margin-top:12px" onclick="loginAdmin()">SIGN IN</button><p id="loginError" class="hint"></p></div><div id="adminBox" style="display:none"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Reservation Requests</h3><button class="small" onclick="logoutAdmin()">Sign out</button></div><div id="adminList"></div></div></div></div>
+<div id="myModal" class="modal hidden"><div class="modal-box"><div class="modal-head"><h2>My Reservation</h2><button class="close" onclick="closeModal('myModal')">Close</button></div><p>Enter your 8-character access code to view your reservation status.</p><input id="lookupCode" maxlength="8" autocomplete="off" placeholder="8-character code" style="width:100%;padding:12px;border:1px solid #ccd5d8;border-radius:8px;text-transform:uppercase"><button class="btn blue-btn" style="margin-top:12px" onclick="lookupReservation()">VIEW RESERVATION</button><div id="myResults"></div></div></div>
 <script>
-/* UI is deliberately independent from Firebase. This prevents a Firebase configuration
-   error from breaking navigation, slideshow, forms, and modals. */
-
 (function(){
-"use strict";
-
-const $=id=>document.getElementById(id);
-const photos=["cvlpc-bg-1.jpg","cvlpc-bg-2.jpg","cvlpc-bg-3.jpg","cvlpc-bg-4.jpg","cvlpc-bg-5.jpg"];
-
-/* ---------- Reliable slideshow using real IMG elements ---------- */
-let index=0, activeA=true;
-const bgA=$("bgA"), bgB=$("bgB");
-photos.forEach(src=>{const i=new Image();i.src=src;});
-setInterval(()=>{
-  const next=photos[(index+1)%photos.length];
-  const incoming=activeA?bgB:bgA;
-  const outgoing=activeA?bgA:bgB;
-  incoming.src=next;
-  incoming.classList.add("on");
-  outgoing.classList.remove("on");
-  activeA=!activeA;
-  index=(index+1)%photos.length;
-},7000);
-
-/* ---------- Navigation ---------- */
-function closeMobile(){ $("mobile").classList.remove("show"); }
-function go(target){
-  closeMobile();
-  if(target==="admin"){ $("adminModal").classList.remove("hide"); return; }
-  if(target==="my"){ $("myModal").classList.remove("hide"); return; }
-  const el=$(target);
-  if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
-}
-document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
-$("menuBtn").addEventListener("click",()=> $("mobile").classList.toggle("show"));
-document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>$(b.dataset.close).classList.add("hide")));
-document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.add("hide")}));
-
-/* ---------- Reservation engine and status flow ---------- */
-const KEY="cvlpc_reservations_v3";
-const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return[]}};
-const save=x=>localStorage.setItem(KEY,JSON.stringify(x));
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-const accessCode=()=>{let s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",r="";for(let i=0;i<8;i++)r+=s[Math.floor(Math.random()*s.length)];return r};
-const reservationNo=()=>{
-  const d=new Date(), ds=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
-  return "CVLPC-"+ds+"-"+String(Math.floor(1000+Math.random()*9000));
-};
-function notice(msg,error=false){
-  const n=$("notice"); n.textContent=msg; n.className="notice"+(error?" err":""); n.style.display="block";
-}
-function statusMessage(status){
-  return {
-    Pending:"Your reservation has been received and is waiting for administrator confirmation.",
-    Confirmed:"Your reservation has been confirmed. See you on the court!",
-    Declined:"This reservation was declined by the administrator. Please choose another schedule.",
-    Cancelled:"This reservation has been cancelled.",
-    Completed:"This playing schedule has already been completed."
-  }[status]||"";
-}
-function statusClass(status){return status==="Confirmed"?"Confirmed":status}
-function renderReservation(r){
-  if(!r){$("myResult").innerHTML="<div class='result'>Reservation not found. Check your reservation number or access code.</div>";return}
-  $("myResult").innerHTML=`
-  <div class="statusCard">
-    <div class="statusTitle">RESERVATION STATUS</div>
-    <span class="statusValue ${esc(statusClass(r.status))}">${esc(r.status.toUpperCase())}</span>
-    <div class="resMeta">
-      <div><small>Reservation No.</small><b>${esc(r.reservationNo)}</b></div>
-      <div><small>Access Code</small><b>${esc(r.accessCode)}</b></div>
-      <div><small>Player</small><b>${esc(r.name)}</b></div>
-      <div><small>Players</small><b>${esc(r.players)}</b></div>
-      <div><small>Date</small><b>${esc(r.date)}</b></div>
-      <div><small>Time</small><b>${esc(r.time)}</b></div>
-    </div>
-    <p style="margin:13px 0 0;color:#56636a">${esc(statusMessage(r.status))}</p>
-  </div>`;
-}
-function openMyReservation(r){
-  $("myModal").classList.remove("hide");
-  if(r){
-    $("lookupCode").value=r.reservationNo;
-    renderReservation(r);
-  }
-}
-function findReservation(query){
-  const q=String(query||"").trim().toUpperCase();
-  return load().find(r=>r.reservationNo.toUpperCase()===q || r.accessCode.toUpperCase()===q);
-}
-
-$("date").min=new Date().toISOString().slice(0,10);
-
-$("reservationForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const r={
-    reservationNo:reservationNo(),
-    accessCode:accessCode(),
-    name:$("name").value.trim(),
-    email:$("email").value.trim().toLowerCase(),
-    phone:$("phone").value.trim(),
-    date:$("date").value,
-    time:$("time").value,
-    players:$("players").value,
-    status:"Pending",
-    created:new Date().toISOString()
-  };
-  const rows=load();
-
-  if(rows.some(x=>x.date===r.date && x.time===r.time && ["Pending","Confirmed"].includes(x.status))){
-    notice("That time slot already has a reservation request. Please choose another time.",true);
-    return;
-  }
-
-  rows.push(r);
-  save(rows);
-  e.target.reset();
-  $("date").min=new Date().toISOString().slice(0,10);
-  notice("Reservation submitted successfully.");
-  refresh();
-  openMyReservation(r);
-});
-
-/* ---------- Public confirmed bookings only ---------- */
-function refresh(){
-  const rows=load().filter(x=>x.status==="Confirmed").slice(-8).reverse();
-  $("recent").innerHTML=rows.length
-    ? rows.map(x=>`<div class="book"><div><b>${esc(x.date)} · ${esc(x.time)}</b><br><small>${esc(x.players)} Players</small></div><span class="badge Confirmed">CONFIRMED</span></div>`).join("")
-    : "<div style='opacity:.7;font-size:12px'>No confirmed bookings yet.</div>";
-}
-$("refreshBtn").addEventListener("click",refresh);
-refresh();
-
-/* ---------- My Reservation ---------- */
-$("lookupBtn").addEventListener("click",()=>{
-  const r=findReservation($("lookupCode").value);
-  renderReservation(r);
-});
-$("lookupCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("lookupBtn").click()});
-
-/* ---------- Administrator ---------- */
-function renderAdmin(){
-  const rows=load();
-  $("adminList").innerHTML=rows.length
-    ? rows.slice().reverse().map(r=>`
-      <div class="adminRow">
-        <div>
-          <b>${esc(r.name)}</b><br>
-          <small>${esc(r.email)} · ${esc(r.phone)}</small><br>
-          <small>${esc(r.reservationNo)} · ${esc(r.date)} · ${esc(r.time)} · ${esc(r.players)} players</small><br>
-          <span class="badge ${esc(statusClass(r.status))}">${esc(r.status.toUpperCase())}</span>
-        </div>
-        <div class="adminBtns">
-          ${r.status==="Pending"
-            ? `<button class="small" style="background:#dff3c4;color:#315e00" data-confirm="${esc(r.reservationNo)}">CONFIRM</button>
-               <button class="small" style="background:#f9deda;color:#8a322b" data-decline="${esc(r.reservationNo)}">DECLINE</button>`
-            : ""}
-          ${r.status==="Confirmed"
-            ? `<button class="small" style="background:#f1e8e8;color:#8a322b" data-cancel="${esc(r.reservationNo)}">CANCEL</button>`
-            : ""}
-        </div>
-      </div>`).join("")
-    : "<p>No reservations yet.</p>";
-
-  document.querySelectorAll("[data-confirm]").forEach(b=>b.onclick=()=>setStatus(b.dataset.confirm,"Confirmed"));
-  document.querySelectorAll("[data-decline]").forEach(b=>b.onclick=()=>setStatus(b.dataset.decline,"Declined"));
-  document.querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>setStatus(b.dataset.cancel,"Cancelled"));
-}
-
-function setStatus(no,status){
-  const rows=load(),i=rows.findIndex(x=>x.reservationNo===no);
-  if(i<0)return;
-  const r=rows[i];
-
-  if(status==="Confirmed" && rows.some((x,j)=>j!==i && x.date===r.date && x.time===r.time && x.status==="Confirmed")){
-    alert("That time slot is already confirmed for another player.");
-    return;
-  }
-
-  r.status=status;
-  r.updated=new Date().toISOString();
-  save(rows);
-  renderAdmin();
-  refresh();
-}
-
-$("loginBtn").addEventListener("click",()=>{
-  const email=$("adminEmail").value.trim(),pass=$("adminPassword").value;
-  if(!email||!pass){$("loginError").textContent="Enter the administrator email and password.";return}
-  $("loginError").textContent="";
-  $("loginBox").style.display="none";
-  $("adminBox").style.display="block";
-  renderAdmin();
-});
-$("adminPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click()});
-$("logoutBtn").addEventListener("click",()=>{
-  $("adminBox").style.display="none";
-  $("loginBox").style.display="block";
-});
+ const bg=['cvlpc-bg-1.jpg','cvlpc-bg-2.jpg','cvlpc-bg-3.jpg','cvlpc-bg-4.jpg','cvlpc-bg-5.jpg'];
+ let i=0, timer;
+ const layer=document.getElementById('bgLayer');
+ function showBg(){layer.style.backgroundImage='url("'+bg[i]+'")';i=(i+1)%bg.length}
+ showBg(); timer=setInterval(showBg,7000);
+ window.home=function(){window.scrollTo({top:0,behavior:'smooth'});setActive('home')};
+ window.go=function(id){const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});setActive(id)}};
+ function setActive(id){document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active',b.dataset.nav===id))}
+ window.toggleMenu=function(){const m=document.getElementById('mobileMenu');m.style.display=m.style.display==='block'?'none':'block'};
+ window.closeModal=function(id){document.getElementById(id).classList.add('hidden')};
+ window.openAdmin=function(){document.getElementById('adminModal').classList.remove('hidden');document.getElementById('adminEmail').focus()};
+ window.openMy=function(){document.getElementById('myModal').classList.remove('hidden');document.getElementById('lookupCode').focus()};
+ window.addEventListener('click',e=>{if(e.target.classList.contains('modal'))e.target.classList.add('hidden')});
+ window.notice=function(t,err){const n=document.getElementById('notice');n.textContent=t;n.className='notice'+(err?' error':'');n.style.display='block'};
+ const today=new Date();const dateEl=document.getElementById('date');dateEl.min=today.toISOString().slice(0,10);
+ window.cvlpcUiReady=true;
+})();
 </script>
-</body>
-</html>
+<script type="module">
+let fb=null;
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+function accessCode(){let s='';for(let i=0;i<8;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s}
+async function initFirebase(){
+ try{
+  const [{initializeApp},{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged},{getFirestore,collection,setDoc,getDoc,getDocs,doc,query,where,limit,updateDoc,serverTimestamp}]=await Promise.all([
+   import('https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js'),
+   import('https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js'),
+   import('https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js')
+  ]);
+  const {firebaseConfig}=await import('./firebase-config.js');
+  const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);
+  fb={auth,db,signInWithEmailAndPassword,signOut,onAuthStateChanged,collection,setDoc,getDoc,getDocs,doc,query,where,limit,updateDoc,serverTimestamp};
+  window.firebaseReady=true; document.body.dataset.firebase='ready';
+  document.getElementById('reservationForm').addEventListener('submit',submitReservation);
+  document.getElementById('date').min=new Date().toISOString().slice(0,10);
+  window.lookupReservation=lookupReservation;window.refreshApproved=refreshApproved;window.loginAdmin=loginAdmin;window.logoutAdmin=logoutAdmin;window.setStatus=setStatus;
+  await refreshApproved();
+  onAuthStateChanged(auth,async user=>{if(user && await isAdmin(user.uid)){document.getElementById('loginBox').style.display='none';document.getElementById('adminBox').style.display='block';await renderAdmin()}});
+ }catch(err){
+  console.error('CVLPC Firebase initialization failed:',err);
+  window.firebaseReady=false;
+  document.getElementById('recent').innerHTML='<div style="opacity:.75;font-size:13px">Reservation database is not connected yet. The website interface is still available.</div>';
+ }
+}
+async function submitReservation(e){
+ e.preventDefault(); if(!fb){window.notice('Firebase is not connected yet. Add the Firebase Web configuration, then redeploy.',true);return}
+ const btn=document.getElementById('submitReservation');btn.disabled=true;
+ try{
+  const name=document.getElementById('name').value.trim(),email=document.getElementById('email').value.trim().toLowerCase(),phone=document.getElementById('phone').value.trim(),date=document.getElementById('date').value,time=document.getElementById('time').value,players=document.getElementById('players').value;
+  const code=accessCode();
+  const existing=await fb.getDoc(fb.doc(fb.db,'reservations',code));
+  if(existing.exists()){window.notice('Please submit again. A temporary access code collision occurred.',true);return}
+  const confirmed=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.where('status','==','Confirmed'),fb.limit(200)));
+  const clash=confirmed.docs.some(d=>{const x=d.data();return x.date===date&&x.time===time});
+  if(clash){window.notice('That time slot is already confirmed. Please choose another time.',true);return}
+  const reservationNo='CVLPC-'+date.replaceAll('-','')+'-'+code.slice(0,4);
+  await fb.setDoc(fb.doc(fb.db,'reservations',code),{reservationNo,accessCode:code,name,email,phone,date,time,players,status:'Pending',createdAt:fb.serverTimestamp()});
+  e.target.reset();document.getElementById('date').min=new Date().toISOString().slice(0,10);
+  window.notice('Reservation submitted. Reservation No.: '+reservationNo+' | Access Code: '+code+' | Status: Pending');
+  setTimeout(()=>{window.openMy();document.getElementById('lookupCode').value=code;lookupReservation()},250);
+ }catch(err){console.error(err);window.notice('Unable to submit the reservation. Please try again.',true)}finally{btn.disabled=false}
+}
+async function refreshApproved(){
+ const box=document.getElementById('recent');if(!fb){box.innerHTML='<div style="opacity:.75;font-size:13px">Reservation database is not connected yet.</div>';return}
+ try{const snap=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.where('status','==','Confirmed'),fb.limit(50)));const rows=snap.docs.map(d=>d.data()).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.time||'').localeCompare(b.time||''));if(!rows.length){box.innerHTML='<div style="opacity:.7;font-size:13px">No confirmed bookings yet.</div>';return}box.innerHTML=rows.slice(0,8).map(x=>`<div class="booking"><div><b>${esc(x.date)} · ${esc(x.time)}</b><br><small>${esc(x.players)} Players</small></div><span class="badge confirmed">CONFIRMED</span></div>`).join('')}catch(e){console.error(e);box.innerHTML='<div style="opacity:.75;font-size:13px">Confirmed bookings could not be loaded.</div>'}
+}
+async function lookupReservation(){
+ const code=document.getElementById('lookupCode').value.trim().toUpperCase(),box=document.getElementById('myResults');box.innerHTML='';if(!code){box.innerHTML='<div class="my-card">Enter your reservation access code.</div>';return}if(!fb){box.innerHTML='<div class="my-card">Firebase is not connected yet.</div>';return}
+ try{let snap=await fb.getDoc(fb.doc(fb.db,'reservations',code));if(!snap.exists()){const q=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.where('accessCode','==',code),fb.limit(1)));snap=q.docs[0]||null;if(!snap){box.innerHTML='<div class="my-card">Reservation not found.</div>';return}}
+ const x=snap.data();box.innerHTML=`<div class="status-box"><b>${esc(x.name)}</b><br><small>Reservation No.: ${esc(x.reservationNo||snap.id)}</small><br>${esc(x.date)} · ${esc(x.time)}<br>${esc(x.players)} player(s)<br><span class="badge ${String(x.status).toLowerCase()}">${esc(x.status)}</span></div>`
+ }catch(err){console.error(err);box.innerHTML='<div class="my-card">Unable to load reservation. Please check the access code.</div>'}
+}
+async function isAdmin(uid){try{const s=await fb.getDoc(fb.doc(fb.db,'admins',uid));return s.exists()&&s.data().active===true}catch(e){return false}}
+async function loginAdmin(){const er=document.getElementById('loginError');er.textContent='';if(!fb){er.textContent='Firebase is not connected yet.';return}try{const c=await fb.signInWithEmailAndPassword(fb.auth,document.getElementById('adminEmail').value.trim(),document.getElementById('adminPassword').value);if(!(await isAdmin(c.user.uid))){await fb.signOut(fb.auth);er.textContent='This account is not registered as a CVLPC administrator.';return}document.getElementById('loginBox').style.display='none';document.getElementById('adminBox').style.display='block';await renderAdmin()}catch(e){console.error(e);er.textContent='Login failed. Check the email and password.'}}
+async function logoutAdmin(){if(fb)await fb.signOut(fb.auth);document.getElementById('loginBox').style.display='block';document.getElementById('adminBox').style.display='none'}
+async function renderAdmin(){const box=document.getElementById('adminList');box.innerHTML='<p>Loading reservations...</p>';try{const snap=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.limit(200)));const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.time||'').localeCompare(b.time||''));if(!rows.length){box.innerHTML='<p>No reservation requests yet.</p>';return}box.innerHTML=rows.map(x=>`<div class="admin-row"><div><b>${esc(x.name)}</b><br><small>${esc(x.email)} · ${esc(x.phone)}</small><br><small>${esc(x.date)} · ${esc(x.time)} · ${esc(x.players)} players</small><br><span class="badge ${String(x.status).toLowerCase()}">${esc(x.status)}</span></div><div>${x.status==='Pending'?`<button class="small" style="background:#e4f5cf;color:#386400" onclick="setStatus('${x.id}','Confirmed')">CONFIRM</button> <button class="small" style="background:#fde5e2;color:#8a382f" onclick="setStatus('${x.id}','Declined')">DECLINE</button>`:''}</div></div>`).join('')}catch(e){console.error(e);box.innerHTML='<p>Unable to load reservations. Check Firebase rules.</p>'}}
+async function setStatus(id,status){try{const snap=await fb.getDoc(fb.doc(fb.db,'reservations',id));if(!snap.exists())return;const x=snap.data();if(status==='Confirmed'){const q=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.where('status','==','Confirmed'),fb.limit(200)));if(q.docs.some(d=>d.id!==id&&d.data().date===x.date&&d.data().time===x.time)){alert('Another confirmed reservation already uses this time slot.');return}}await fb.updateDoc(fb.doc(fb.db,'reservations',id),{status,approvedAt:status==='Confirmed'?fb.serverTimestamp():null,rejectedAt:status==='Declined'?fb.serverTimestamp():null,updatedAt:fb.serverTimestamp()});await renderAdmin();await refreshApproved()}catch(e){console.error(e);alert('Unable to update reservation. Check Firebase rules.')}}
+initFirebase();
+</script>
+</body></html>
