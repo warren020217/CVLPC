@@ -1,17 +1,19 @@
-# CVLPC Final Stable Version
+# CVLPC Reservation Flow Final
 
-This version was rebuilt to fix the two problems visible in the previous deployment.
+## Reservation workflow
+1. Player completes the reservation form.
+2. A Reservation No. such as `CVLPC-20260820-1234` and an Access Code are generated.
+3. The site automatically opens **My Reservation** after saving.
+4. New reservations start as **PENDING**.
+5. Administrator can **CONFIRM**, **DECLINE**, or later **CANCEL** a confirmed reservation.
+6. Confirmed reservations are the only reservations shown publicly on the home page.
+7. Players can retrieve a reservation using either the Reservation No. or Access Code.
+8. Past reservations can later be marked **COMPLETED**.
 
-## Fixed
-- Five supplied CVLPC photos rotate every 7 seconds.
-- Background is implemented with real `<img>` layers rather than CSS background-image swapping.
-- Background opacity is 30%.
-- New `logo-CVLPC.png` is used as the header logo, hero logo, favicon and mobile icons.
-- Navigation and buttons are independent of Firebase loading.
-- Reservation, My Reservations, Admin Login, Approve, Reject, Refresh and mobile navigation work immediately for testing.
-- Reservations are stored in browser local storage in this standalone test version.
+## Current testing mode
+This build uses browser local storage so the complete workflow can be tested without Firebase breaking the interface.
 
-## Before production
-Connect the reservation engine to Firebase Firestore and Firebase Authentication. Do not use the local admin test login as a production security mechanism.
+For production, connect the same data model to Firebase Authentication + Firestore. The local administrator login is for interface testing only and must not be used as production security.
 
-Upload every file to GitHub and let Vercel redeploy.
+## Files
+All CVLPC background photos, logo, favicon, PWA icons, Firebase files, and the responsive website are included.

@@ -51,7 +51,10 @@ main{max-width:1320px;margin:auto}
 .card p{line-height:1.45;margin:0 0 18px}.btn{border:0;border-radius:8px;padding:12px 15px;font-weight:900;width:100%}
 .greenBtn{background:var(--lime);color:#183000}.blueBtn{background:var(--blue);color:#fff}.orangeBtn{background:var(--orange);color:#fff}.outline{background:transparent;color:var(--lime);border:1px solid var(--lime)}
 .book{padding:9px 0;border-bottom:1px solid #ffffff22;font-size:12px;display:flex;justify-content:space-between;gap:10px}.book:last-child{border-bottom:0}
-.badge{font-size:9px;padding:4px 6px;border-radius:4px;color:#fff;font-weight:900}.Approved{background:#6db800}.Pending{background:#df9a00}.Rejected{background:#bd453a}
+.badge{font-size:9px;padding:4px 6px;border-radius:4px;color:#fff;font-weight:900}.Confirmed{background:#55a900}.Pending{background:#d99000}.Declined{background:#b83e35}.Cancelled{background:#666}.Completed{background:#3977a8}
+.statusCard{margin-top:14px;border:1px solid #dbe2e5;border-radius:12px;padding:16px;background:#f8fafb}
+.statusTitle{font-size:12px;font-weight:900;letter-spacing:.8px;color:#64727a}.statusValue{display:inline-block;margin:7px 0 12px;padding:7px 11px;border-radius:7px;color:#fff;font-size:12px;font-weight:900}
+.resMeta{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}.resMeta div{background:#fff;border:1px solid #e2e7e9;border-radius:8px;padding:9px}.resMeta small{display:block;color:#69757a;font-size:10px;text-transform:uppercase;font-weight:800}.resMeta b{display:block;margin-top:3px}
 .section{padding:30px 36px 55px}.section h2{color:#fff;font-size:32px;text-shadow:0 3px 9px #000;margin:0 0 15px}
 .panel{background:#fffffff5;border-radius:16px;padding:25px;box-shadow:0 14px 35px #0006}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field label{display:block;font-weight:800;margin-bottom:5px}.field input,.field select{width:100%;padding:12px;border:1px solid #ccd5d9;border-radius:8px;background:#fff}
@@ -151,7 +154,10 @@ header{height:66px}.nav{padding:0 10px}.brand{min-width:0}.logo{width:49px;heigh
 </div></div>
 
 <div id="myModal" class="modal hide"><div class="modalBox"><div class="modalHead"><h2>My Reservation</h2><button class="close" data-close="myModal">Close</button></div>
-<p>Enter your reservation access code.</p><input id="lookupCode" maxlength="8" placeholder="8-character code" style="width:100%;padding:12px;text-transform:uppercase"><button class="btn blueBtn" id="lookupBtn" style="margin-top:10px">VIEW RESERVATION</button><div id="myResult"></div>
+<p>Enter your reservation number or access code to view your reservation.</p>
+<input id="lookupCode" maxlength="24" placeholder="Reservation No. or Access Code" style="width:100%;padding:12px;text-transform:uppercase">
+<button class="btn blueBtn" id="lookupBtn" style="margin-top:10px">VIEW RESERVATION</button>
+<div id="myResult"><div class="result">Your reservation details will appear here.</div></div>
 </div></div>
 
 <script>
@@ -193,66 +199,166 @@ $("menuBtn").addEventListener("click",()=> $("mobile").classList.toggle("show"))
 document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>$(b.dataset.close).classList.add("hide")));
 document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.add("hide")}));
 
-/* ---------- Local reservation engine that always works for testing ---------- */
-const KEY="cvlpc_reservations_v2";
-const load=()=>JSON.parse(localStorage.getItem(KEY)||"[]");
+/* ---------- Reservation engine and status flow ---------- */
+const KEY="cvlpc_reservations_v3";
+const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return[]}};
 const save=x=>localStorage.setItem(KEY,JSON.stringify(x));
-const code=()=>{let s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",r="";for(let i=0;i<8;i++)r+=s[Math.floor(Math.random()*s.length)];return r};
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
-function notice(msg,error=false){const n=$("notice");n.textContent=msg;n.className="notice"+(error?" err":"");n.style.display="block"}
+const accessCode=()=>{let s="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",r="";for(let i=0;i<8;i++)r+=s[Math.floor(Math.random()*s.length)];return r};
+const reservationNo=()=>{
+  const d=new Date(), ds=d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+  return "CVLPC-"+ds+"-"+String(Math.floor(1000+Math.random()*9000));
+};
+function notice(msg,error=false){
+  const n=$("notice"); n.textContent=msg; n.className="notice"+(error?" err":""); n.style.display="block";
+}
+function statusMessage(status){
+  return {
+    Pending:"Your reservation has been received and is waiting for administrator confirmation.",
+    Confirmed:"Your reservation has been confirmed. See you on the court!",
+    Declined:"This reservation was declined by the administrator. Please choose another schedule.",
+    Cancelled:"This reservation has been cancelled.",
+    Completed:"This playing schedule has already been completed."
+  }[status]||"";
+}
+function statusClass(status){return status==="Confirmed"?"Confirmed":status}
+function renderReservation(r){
+  if(!r){$("myResult").innerHTML="<div class='result'>Reservation not found. Check your reservation number or access code.</div>";return}
+  $("myResult").innerHTML=`
+  <div class="statusCard">
+    <div class="statusTitle">RESERVATION STATUS</div>
+    <span class="statusValue ${esc(statusClass(r.status))}">${esc(r.status.toUpperCase())}</span>
+    <div class="resMeta">
+      <div><small>Reservation No.</small><b>${esc(r.reservationNo)}</b></div>
+      <div><small>Access Code</small><b>${esc(r.accessCode)}</b></div>
+      <div><small>Player</small><b>${esc(r.name)}</b></div>
+      <div><small>Players</small><b>${esc(r.players)}</b></div>
+      <div><small>Date</small><b>${esc(r.date)}</b></div>
+      <div><small>Time</small><b>${esc(r.time)}</b></div>
+    </div>
+    <p style="margin:13px 0 0;color:#56636a">${esc(statusMessage(r.status))}</p>
+  </div>`;
+}
+function openMyReservation(r){
+  $("myModal").classList.remove("hide");
+  if(r){
+    $("lookupCode").value=r.reservationNo;
+    renderReservation(r);
+  }
+}
+function findReservation(query){
+  const q=String(query||"").trim().toUpperCase();
+  return load().find(r=>r.reservationNo.toUpperCase()===q || r.accessCode.toUpperCase()===q);
+}
 
 $("date").min=new Date().toISOString().slice(0,10);
 
 $("reservationForm").addEventListener("submit",e=>{
- e.preventDefault();
- const r={id:code(),name:$("name").value.trim(),email:$("email").value.trim().toLowerCase(),phone:$("phone").value.trim(),date:$("date").value,time:$("time").value,players:$("players").value,status:"Pending",created:new Date().toISOString()};
- const rows=load();
- if(rows.some(x=>x.date===r.date&&x.time===r.time&&x.status==="Approved")){
-   notice("That time slot is already approved. Please choose another time.",true);return;
- }
- rows.push(r);save(rows);e.target.reset();$("date").min=new Date().toISOString().slice(0,10);
- notice("Reservation submitted. Your access code is "+r.id+". Save it to check your status.");
- refresh();
+  e.preventDefault();
+  const r={
+    reservationNo:reservationNo(),
+    accessCode:accessCode(),
+    name:$("name").value.trim(),
+    email:$("email").value.trim().toLowerCase(),
+    phone:$("phone").value.trim(),
+    date:$("date").value,
+    time:$("time").value,
+    players:$("players").value,
+    status:"Pending",
+    created:new Date().toISOString()
+  };
+  const rows=load();
+
+  if(rows.some(x=>x.date===r.date && x.time===r.time && ["Pending","Confirmed"].includes(x.status))){
+    notice("That time slot already has a reservation request. Please choose another time.",true);
+    return;
+  }
+
+  rows.push(r);
+  save(rows);
+  e.target.reset();
+  $("date").min=new Date().toISOString().slice(0,10);
+  notice("Reservation submitted successfully.");
+  refresh();
+  openMyReservation(r);
 });
 
-/* ---------- Public approved bookings ---------- */
+/* ---------- Public confirmed bookings only ---------- */
 function refresh(){
- const rows=load().filter(x=>x.status==="Approved").slice(-8).reverse();
- $("recent").innerHTML=rows.length?rows.map(x=>`<div class="book"><div><b>${esc(x.date)} · ${esc(x.time)}</b><br><small>${esc(x.players)} Players</small></div><span class="badge Approved">APPROVED</span></div>`).join(""):"<div style='opacity:.7;font-size:12px'>No approved bookings yet.</div>";
+  const rows=load().filter(x=>x.status==="Confirmed").slice(-8).reverse();
+  $("recent").innerHTML=rows.length
+    ? rows.map(x=>`<div class="book"><div><b>${esc(x.date)} · ${esc(x.time)}</b><br><small>${esc(x.players)} Players</small></div><span class="badge Confirmed">CONFIRMED</span></div>`).join("")
+    : "<div style='opacity:.7;font-size:12px'>No confirmed bookings yet.</div>";
 }
 $("refreshBtn").addEventListener("click",refresh);
 refresh();
 
-/* ---------- My reservations ---------- */
+/* ---------- My Reservation ---------- */
 $("lookupBtn").addEventListener("click",()=>{
- const c=$("lookupCode").value.trim().toUpperCase();
- const r=load().find(x=>x.id===c);
- $("myResult").innerHTML=r?`<div class="result"><b>${esc(r.name)}</b><br>${esc(r.date)} · ${esc(r.time)}<br>${esc(r.players)} player(s)<br><span class="badge ${esc(r.status)}">${esc(r.status)}</span></div>`:"<div class='result'>Reservation not found.</div>";
+  const r=findReservation($("lookupCode").value);
+  renderReservation(r);
 });
+$("lookupCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("lookupBtn").click()});
 
-/* ---------- Admin demo / local test ---------- */
+/* ---------- Administrator ---------- */
 function renderAdmin(){
- const rows=load();
- $("adminList").innerHTML=rows.length?rows.slice().reverse().map(r=>`<div class="adminRow"><div><b>${esc(r.name)}</b><br><small>${esc(r.email)} · ${esc(r.phone)}</small><br><small>${esc(r.date)} · ${esc(r.time)} · ${esc(r.players)} players</small><br><span class="badge ${esc(r.status)}">${esc(r.status)}</span><br><small>Code: ${esc(r.id)}</small></div><div class="adminBtns">${r.status==="Pending"?`<button class="small" style="background:#dff3c4;color:#315e00" data-ok="${esc(r.id)}">APPROVE</button><button class="small" style="background:#f9deda;color:#8a322b" data-no="${esc(r.id)}">REJECT</button>`:""}</div></div>`).join(""):"<p>No reservations yet.</p>";
- document.querySelectorAll("[data-ok]").forEach(b=>b.onclick=()=>setStatus(b.dataset.ok,"Approved"));
- document.querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>setStatus(b.dataset.no,"Rejected"));
+  const rows=load();
+  $("adminList").innerHTML=rows.length
+    ? rows.slice().reverse().map(r=>`
+      <div class="adminRow">
+        <div>
+          <b>${esc(r.name)}</b><br>
+          <small>${esc(r.email)} · ${esc(r.phone)}</small><br>
+          <small>${esc(r.reservationNo)} · ${esc(r.date)} · ${esc(r.time)} · ${esc(r.players)} players</small><br>
+          <span class="badge ${esc(statusClass(r.status))}">${esc(r.status.toUpperCase())}</span>
+        </div>
+        <div class="adminBtns">
+          ${r.status==="Pending"
+            ? `<button class="small" style="background:#dff3c4;color:#315e00" data-confirm="${esc(r.reservationNo)}">CONFIRM</button>
+               <button class="small" style="background:#f9deda;color:#8a322b" data-decline="${esc(r.reservationNo)}">DECLINE</button>`
+            : ""}
+          ${r.status==="Confirmed"
+            ? `<button class="small" style="background:#f1e8e8;color:#8a322b" data-cancel="${esc(r.reservationNo)}">CANCEL</button>`
+            : ""}
+        </div>
+      </div>`).join("")
+    : "<p>No reservations yet.</p>";
+
+  document.querySelectorAll("[data-confirm]").forEach(b=>b.onclick=()=>setStatus(b.dataset.confirm,"Confirmed"));
+  document.querySelectorAll("[data-decline]").forEach(b=>b.onclick=()=>setStatus(b.dataset.decline,"Declined"));
+  document.querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>setStatus(b.dataset.cancel,"Cancelled"));
 }
-function setStatus(id,status){
- const rows=load(),i=rows.findIndex(x=>x.id===id);if(i<0)return;
- if(status==="Approved"&&rows.some((x,j)=>j!==i&&x.date===rows[i].date&&x.time===rows[i].time&&x.status==="Approved")){alert("That time slot is already approved.");return}
- rows[i].status=status;save(rows);renderAdmin();refresh();
+
+function setStatus(no,status){
+  const rows=load(),i=rows.findIndex(x=>x.reservationNo===no);
+  if(i<0)return;
+  const r=rows[i];
+
+  if(status==="Confirmed" && rows.some((x,j)=>j!==i && x.date===r.date && x.time===r.time && x.status==="Confirmed")){
+    alert("That time slot is already confirmed for another player.");
+    return;
+  }
+
+  r.status=status;
+  r.updated=new Date().toISOString();
+  save(rows);
+  renderAdmin();
+  refresh();
 }
+
 $("loginBtn").addEventListener("click",()=>{
- /* Local testing login. Replace/augment this with Firebase Authentication once the
-    Firebase project is connected. The UI never depends on this module loading. */
- const email=$("adminEmail").value.trim(),pass=$("adminPassword").value;
- if(!email||!pass){$("loginError").textContent="Enter the administrator email and password.";return}
- $("loginError").textContent="";
- $("loginBox").style.display="none";$("adminBox").style.display="block";renderAdmin();
+  const email=$("adminEmail").value.trim(),pass=$("adminPassword").value;
+  if(!email||!pass){$("loginError").textContent="Enter the administrator email and password.";return}
+  $("loginError").textContent="";
+  $("loginBox").style.display="none";
+  $("adminBox").style.display="block";
+  renderAdmin();
 });
 $("adminPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginBtn").click()});
-$("logoutBtn").addEventListener("click",()=>{$("adminBox").style.display="none";$("loginBox").style.display="block"});
-})();
+$("logoutBtn").addEventListener("click",()=>{
+  $("adminBox").style.display="none";
+  $("loginBox").style.display="block";
+});
 </script>
 </body>
 </html>
