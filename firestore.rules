@@ -1,6 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
     function isAdmin() {
       return request.auth != null &&
         exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
@@ -15,20 +16,29 @@ service cloud.firestore {
     match /reservations/{reservationId} {
       allow create: if
         request.resource.data.status == 'Pending' &&
-        request.resource.data.name is string && request.resource.data.name.size() >= 2 &&
-        request.resource.data.email is string && request.resource.data.email.size() >= 5 &&
-        request.resource.data.phone is string && request.resource.data.phone.size() >= 7 &&
-        request.resource.data.date is string && request.resource.data.time is string &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() >= 2 &&
+        request.resource.data.email is string &&
+        request.resource.data.email.size() >= 5 &&
+        request.resource.data.phone is string &&
+        request.resource.data.phone.size() >= 7 &&
+        request.resource.data.date is string &&
+        request.resource.data.time is string &&
         request.resource.data.players is string &&
-        request.resource.data.accessCode is string && request.resource.data.accessCode.size() == 8 && reservationId == request.resource.data.accessCode;
+        request.resource.data.accessCode is string &&
+        request.resource.data.accessCode.size() == 8 &&
+        reservationId == request.resource.data.accessCode;
 
-      // Public calendar only exposes approved reservations.
-      allow get: if isAdmin() || resource.data.status == 'Approved' || resource.data.accessCode == reservationId;
-      allow list: if resource.data.status == 'Approved' || isAdmin();
+      allow get: if isAdmin() ||
+        resource.data.status == 'Approved' ||
+        resource.data.accessCode == reservationId;
+
+      allow list: if isAdmin() ||
+        resource.data.status == 'Approved';
 
       allow update: if isAdmin() &&
         request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['status','approvedAt','rejectedAt','adminNote','updatedAt']);
+          .hasOnly(['status','approvedAt','rejectedAt','updatedAt']);
 
       allow delete: if isAdmin();
     }
