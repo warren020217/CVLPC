@@ -1,11 +1,17 @@
-// Paste the Firebase Web App configuration from Firebase Console here.
-// Firebase web configuration is not a password. Your Firestore Security Rules
-// are what protect the database.
-export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBAevzPmEW6_6ye-Ft_salWmo6H3kib-jQ",
+  authDomain: "jtdr-aa375.firebaseapp.com",
+  projectId: "jtdr-aa375",
+  storageBucket: "jtdr-aa375.firebasestorage.app",
+  messagingSenderId: "484067769209",
+  appId: "1:484067769209:web:e1e440677bd9182e3acda8"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
