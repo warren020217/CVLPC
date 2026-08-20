@@ -61,75 +61,503 @@ button,input,select{font:inherit}button{cursor:pointer}.header{position:sticky;t
 </script>
 <script type="module">
 let fb=null;
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+}[m]));
+
 const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-function accessCode(){let s='';for(let i=0;i<8;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s}
+
+function accessCode(){
+  let s='';
+  for(let i=0;i<8;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+
 async function initFirebase(){
- try{
-  const [{initializeApp},{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged},{getFirestore,collection,setDoc,getDoc,getDocs,doc,query,where,limit,updateDoc,serverTimestamp}]=await Promise.all([
-   import('https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js'),
-   import('https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js'),
-   import('https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js')
-  ]);
-  const {firebaseConfig}=await import('./firebase-config.js');
-  const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getFirestore(app);
-  fb={auth,db,signInWithEmailAndPassword,signOut,onAuthStateChanged,collection,setDoc,getDoc,getDocs,doc,query,where,limit,updateDoc,serverTimestamp};
-  window.firebaseReady=true; document.body.dataset.firebase='ready';
-  document.getElementById('reservationForm').addEventListener('submit',submitReservation);
-  document.getElementById('date').min=new Date().toISOString().slice(0,10);
-  window.lookupReservation=lookupReservation;window.refreshBookings=refreshBookings;window.refreshApproved=refreshBookings;window.loginAdmin=loginAdmin;window.logoutAdmin=logoutAdmin;window.setStatus=setStatus;
-  await refreshBookings();
-  onAuthStateChanged(auth,async user=>{if(user && await isAdmin(user.uid)){document.getElementById('loginBox').style.display='none';document.getElementById('adminBox').style.display='block';await renderAdmin()}});
- }catch(err){
-  console.error('CVLPC Firebase initialization failed:',err);
-  window.firebaseReady=false;
-  document.getElementById('recent').innerHTML='<div style="opacity:.75;font-size:13px">Reservation database is not connected yet. The website interface is still available.</div>';
- }
+  try{
+    const [
+      {initializeApp},
+      {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged},
+      {getFirestore,collection,setDoc,getDoc,getDocs,doc,query,where,limit,updateDoc,writeBatch,serverTimestamp}
+    ]=await Promise.all([
+      import('https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js'),
+      import('https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js')
+    ]);
+
+    const {firebaseConfig}=await import('./firebase-config.js');
+    const app=initializeApp(firebaseConfig);
+    const auth=getAuth(app);
+    const db=getFirestore(app);
+
+    fb={
+      auth,db,
+      signInWithEmailAndPassword,signOut,onAuthStateChanged,
+      collection,setDoc,getDoc,getDocs,doc,query,where,limit,
+      updateDoc,writeBatch,serverTimestamp
+    };
+
+    window.firebaseReady=true;
+    document.body.dataset.firebase='ready';
+
+    document.getElementById('reservationForm')
+      .addEventListener('submit',submitReservation);
+
+    document.getElementById('date').min=new Date().toISOString().slice(0,10);
+
+    window.lookupReservation=lookupReservation;
+    window.refreshBookings=refreshBookings;
+    window.refreshApproved=refreshBookings;
+    window.loginAdmin=loginAdmin;
+    window.logoutAdmin=logoutAdmin;
+    window.setStatus=setStatus;
+
+    await refreshBookings();
+
+    onAuthStateChanged(auth,async user=>{
+      if(user && await isAdmin(user.uid)){
+        document.getElementById('loginBox').style.display='none';
+        document.getElementById('adminBox').style.display='block';
+        await renderAdmin();
+      }
+    });
+
+  }catch(err){
+    console.error('CVLPC Firebase initialization failed:',err);
+    window.firebaseReady=false;
+    document.getElementById('recent').innerHTML=
+      '<div style="opacity:.75;font-size:13px">Reservation database is not connected yet.</div>';
+  }
 }
+
 async function submitReservation(e){
- e.preventDefault(); if(!fb){window.notice('Firebase is not connected yet. Add the Firebase Web configuration, then redeploy.',true);return}
- const btn=document.getElementById('submitReservation');btn.disabled=true;
- try{
-  const name=document.getElementById('name').value.trim(),email=document.getElementById('email').value.trim().toLowerCase(),phone=document.getElementById('phone').value.trim(),date=document.getElementById('date').value,time=document.getElementById('time').value,players=document.getElementById('players').value;
-  const code=accessCode();
-  const existing=await fb.getDoc(fb.doc(fb.db,'reservations',code));
-  if(existing.exists()){window.notice('Please submit again. A temporary access code collision occurred.',true);return}
-  const confirmed=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.where('status','in',['Confirmed','confirmed']),fb.limit(200)));
-  const clash=confirmed.docs.some(d=>{const x=d.data();return x.date===date&&x.time===time});
-  if(clash){window.notice('That time slot is already confirmed. Please choose another time.',true);return}
-  const reservationNo='CVLPC-'+date.replaceAll('-','')+'-'+code.slice(0,4);
-  await fb.setDoc(fb.doc(fb.db,'reservations',code),{reservationNo,accessCode:code,name,email,phone,date,time,players,status:'Pending',createdAt:fb.serverTimestamp()});
-  e.target.reset();document.getElementById('date').min=new Date().toISOString().slice(0,10);
-  window.notice('Reservation submitted. Reservation No.: '+reservationNo+' | Access Code: '+code+' | Status: Pending');
-  setTimeout(()=>{window.openMy();document.getElementById('lookupCode').value=code;lookupReservation()},250);
- }catch(err){console.error(err);window.notice('Unable to submit the reservation. Please try again.',true)}finally{btn.disabled=false}
+  e.preventDefault();
+
+  if(!fb){
+    window.notice(
+      'Firebase is not connected yet. Add the Firebase Web configuration, then redeploy.',
+      true
+    );
+    return;
+  }
+
+  const btn=document.getElementById('submitReservation');
+  btn.disabled=true;
+
+  try{
+    const name=document.getElementById('name').value.trim();
+    const email=document.getElementById('email').value.trim().toLowerCase();
+    const phone=document.getElementById('phone').value.trim();
+    const date=document.getElementById('date').value;
+    const time=document.getElementById('time').value;
+    const players=document.getElementById('players').value;
+
+    const code=accessCode();
+
+    const existing=await fb.getDoc(
+      fb.doc(fb.db,'reservations',code)
+    );
+
+    if(existing.exists()){
+      window.notice(
+        'Please submit again. A temporary access code collision occurred.',
+        true
+      );
+      return;
+    }
+
+    /*
+      Public booking data is stored separately from the private reservation.
+      This prevents the public BOOKINGS panel from exposing names, email
+      addresses, and phone numbers.
+    */
+    const confirmed=await fb.getDocs(
+      fb.query(
+        fb.collection(fb.db,'publicBookings'),
+        fb.where('status','in',['Confirmed','confirmed']),
+        fb.limit(200)
+      )
+    );
+
+    const clash=confirmed.docs.some(d=>{
+      const x=d.data();
+      return x.date===date && x.time===time;
+    });
+
+    if(clash){
+      window.notice(
+        'That time slot is already confirmed. Please choose another time.',
+        true
+      );
+      return;
+    }
+
+    const reservationNo=
+      'CVLPC-'+date.replaceAll('-','')+'-'+code.slice(0,4);
+
+    const reservationRef=fb.doc(fb.db,'reservations',code);
+    const publicRef=fb.doc(fb.db,'publicBookings',code);
+
+    const batch=fb.writeBatch(fb.db);
+
+    batch.set(reservationRef,{
+      reservationNo,
+      accessCode:code,
+      name,
+      email,
+      phone,
+      date,
+      time,
+      players,
+      status:'Pending',
+      createdAt:fb.serverTimestamp()
+    });
+
+    batch.set(publicRef,{
+      reservationNo,
+      accessCode:code,
+      date,
+      time,
+      players,
+      status:'Pending',
+      createdAt:fb.serverTimestamp()
+    });
+
+    await batch.commit();
+
+    e.target.reset();
+    document.getElementById('date').min=
+      new Date().toISOString().slice(0,10);
+
+    window.notice(
+      'Reservation submitted. Reservation No.: '+
+      reservationNo+
+      ' | Access Code: '+
+      code+
+      ' | Status: Pending'
+    );
+
+    await refreshBookings();
+
+    setTimeout(()=>{
+      window.openMy();
+      document.getElementById('lookupCode').value=code;
+      lookupReservation();
+    },250);
+
+  }catch(err){
+    console.error('Reservation submission error:',err);
+    window.notice(
+      'Unable to submit the reservation. Please try again.',
+      true
+    );
+  }finally{
+    btn.disabled=false;
+  }
 }
+
 async function refreshBookings(){
- const box=document.getElementById('recent');if(!fb){box.innerHTML='<div style="opacity:.75;font-size:13px">Reservation database is not connected yet.</div>';return}
- try{
-  const snap=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.where('status','in',['Pending','pending','Confirmed','confirmed']),fb.limit(100)));
-  const rows=snap.docs.map(d=>d.data()).filter(x=>['Pending','pending','Confirmed','confirmed'].includes(String(x.status))).sort((a,b)=>{
-   const ad=(a.date||'')+' '+(a.time||''); const bd=(b.date||'')+' '+(b.time||''); return ad.localeCompare(bd);
-  });
-  if(!rows.length){box.innerHTML='<div style="opacity:.7;font-size:13px">No bookings yet.</div>';return}
-  box.innerHTML=rows.slice(0,8).map(x=>{
-   const st=String(x.status||'Pending').toLowerCase()==='confirmed'?'CONFIRMED':'PENDING';
-   const cls=st.toLowerCase();
-   return `<div class="booking"><div><b>${esc(x.date)} · ${esc(x.time)}</b><br><small>${esc(x.players)} Players</small></div><span class="badge ${cls}">${st}</span></div>`;
-  }).join('');
- }catch(e){console.error(e);box.innerHTML='<div style="opacity:.75;font-size:13px">Bookings could not be loaded.</div>'}
+  const box=document.getElementById('recent');
+
+  if(!fb){
+    box.innerHTML=
+      '<div style="opacity:.75;font-size:13px">Reservation database is not connected yet.</div>';
+    return;
+  }
+
+  try{
+    const snap=await fb.getDocs(
+      fb.query(
+        fb.collection(fb.db,'publicBookings'),
+        fb.where('status','in',['Pending','pending','Confirmed','confirmed']),
+        fb.limit(100)
+      )
+    );
+
+    const rows=snap.docs
+      .map(d=>d.data())
+      .filter(x=>['Pending','pending','Confirmed','confirmed']
+        .includes(String(x.status)))
+      .sort((a,b)=>{
+        const ad=(a.date||'')+' '+(a.time||'');
+        const bd=(b.date||'')+' '+(b.time||'');
+        return ad.localeCompare(bd);
+      });
+
+    if(!rows.length){
+      box.innerHTML=
+        '<div style="opacity:.7;font-size:13px">No bookings yet.</div>';
+      return;
+    }
+
+    box.innerHTML=rows.slice(0,8).map(x=>{
+      const st=
+        String(x.status||'Pending').toLowerCase()==='confirmed'
+        ?'CONFIRMED'
+        :'PENDING';
+
+      const cls=st.toLowerCase();
+
+      return `
+        <div class="booking">
+          <div>
+            <b>${esc(x.date)} · ${esc(x.time)}</b><br>
+            <small>${esc(x.players)} Players</small>
+          </div>
+          <span class="badge ${cls}">${st}</span>
+        </div>`;
+    }).join('');
+
+  }catch(e){
+    console.error('Public bookings error:',e);
+    box.innerHTML=
+      '<div style="opacity:.75;font-size:13px">Bookings could not be loaded.</div>';
+  }
 }
+
 async function lookupReservation(){
- const code=document.getElementById('lookupCode').value.trim().toUpperCase(),box=document.getElementById('myResults');box.innerHTML='';if(!code){box.innerHTML='<div class="my-card">Enter your reservation access code.</div>';return}if(!fb){box.innerHTML='<div class="my-card">Firebase is not connected yet.</div>';return}
- try{let snap=await fb.getDoc(fb.doc(fb.db,'reservations',code));if(!snap.exists()){const q=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.where('accessCode','==',code),fb.limit(1)));snap=q.docs[0]||null;if(!snap){box.innerHTML='<div class="my-card">Reservation not found.</div>';return}}
- const x=snap.data();box.innerHTML=`<div class="status-box"><b>${esc(x.name)}</b><br><small>Reservation No.: ${esc(x.reservationNo||snap.id)}</small><br>${esc(x.date)} · ${esc(x.time)}<br>${esc(x.players)} player(s)<br><span class="badge ${String(x.status).toLowerCase()}">${esc(x.status)}</span></div>`
- }catch(err){console.error(err);box.innerHTML='<div class="my-card">Unable to load reservation. Please check the access code.</div>'}
+  const code=
+    document.getElementById('lookupCode').value.trim().toUpperCase();
+
+  const box=document.getElementById('myResults');
+  box.innerHTML='';
+
+  if(!code){
+    box.innerHTML=
+      '<div class="my-card">Enter your reservation access code.</div>';
+    return;
+  }
+
+  if(!fb){
+    box.innerHTML=
+      '<div class="my-card">Firebase is not connected yet.</div>';
+    return;
+  }
+
+  try{
+    const snap=await fb.getDoc(
+      fb.doc(fb.db,'reservations',code)
+    );
+
+    if(!snap.exists()){
+      box.innerHTML=
+        '<div class="my-card">Reservation not found.</div>';
+      return;
+    }
+
+    const x=snap.data();
+
+    const statusClass=
+      String(x.status||'pending').toLowerCase();
+
+    box.innerHTML=`
+      <div class="status-box">
+        <b>${esc(x.name)}</b><br>
+        <small>Reservation No.: ${esc(x.reservationNo||snap.id)}</small><br>
+        ${esc(x.date)} · ${esc(x.time)}<br>
+        ${esc(x.players)} player(s)<br>
+        <span class="badge ${statusClass}">
+          ${esc(x.status)}
+        </span>
+      </div>`;
+
+  }catch(err){
+    console.error('Reservation lookup error:',err);
+    box.innerHTML=
+      '<div class="my-card">Unable to load reservation. Please check the access code.</div>';
+  }
 }
-async function isAdmin(uid){try{const s=await fb.getDoc(fb.doc(fb.db,'admins',uid));return s.exists()&&s.data().active===true}catch(e){return false}}
-async function loginAdmin(){const er=document.getElementById('loginError');er.textContent='';if(!fb){er.textContent='Firebase is not connected yet.';return}try{const c=await fb.signInWithEmailAndPassword(fb.auth,document.getElementById('adminEmail').value.trim(),document.getElementById('adminPassword').value);if(!(await isAdmin(c.user.uid))){await fb.signOut(fb.auth);er.textContent='This account is not registered as a CVLPC administrator.';return}document.getElementById('loginBox').style.display='none';document.getElementById('adminBox').style.display='block';await renderAdmin()}catch(e){console.error(e);er.textContent='Login failed. Check the email and password.'}}
-async function logoutAdmin(){if(fb)await fb.signOut(fb.auth);document.getElementById('loginBox').style.display='block';document.getElementById('adminBox').style.display='none'}
-async function renderAdmin(){const box=document.getElementById('adminList');box.innerHTML='<p>Loading reservations...</p>';try{const snap=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.limit(200)));const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.time||'').localeCompare(b.time||''));if(!rows.length){box.innerHTML='<p>No reservation requests yet.</p>';return}box.innerHTML=rows.map(x=>`<div class="admin-row"><div><b>${esc(x.name)}</b><br><small>${esc(x.email)} · ${esc(x.phone)}</small><br><small>${esc(x.date)} · ${esc(x.time)} · ${esc(x.players)} players</small><br><span class="badge ${String(x.status).toLowerCase()}">${esc(x.status)}</span></div><div>${['Pending','pending'].includes(String(x.status))?`<button class="small" style="background:#e4f5cf;color:#386400" onclick="setStatus('${x.id}','Confirmed')">CONFIRM</button> <button class="small" style="background:#fde5e2;color:#8a382f" onclick="setStatus('${x.id}','Declined')">DECLINE</button>`:''}</div></div>`).join('')}catch(e){console.error(e);box.innerHTML='<p>Unable to load reservations. Check Firebase rules.</p>'}}
-async function setStatus(id,status){try{const snap=await fb.getDoc(fb.doc(fb.db,'reservations',id));if(!snap.exists())return;const x=snap.data();if(status==='Confirmed'){const q=await fb.getDocs(fb.query(fb.collection(fb.db,'reservations'),fb.where('status','in',['Confirmed','confirmed']),fb.limit(200)));if(q.docs.some(d=>d.id!==id&&d.data().date===x.date&&d.data().time===x.time)){alert('Another confirmed reservation already uses this time slot.');return}}await fb.updateDoc(fb.doc(fb.db,'reservations',id),{status,approvedAt:status==='Confirmed'?fb.serverTimestamp():null,rejectedAt:status==='Declined'?fb.serverTimestamp():null,updatedAt:fb.serverTimestamp()});await renderAdmin();await refreshApproved()}catch(e){console.error(e);alert('Unable to update reservation. Check Firebase rules.')}}
+
+async function isAdmin(uid){
+  try{
+    const s=await fb.getDoc(
+      fb.doc(fb.db,'admins',uid)
+    );
+    return s.exists() && s.data().active===true;
+  }catch(e){
+    console.error(e);
+    return false;
+  }
+}
+
+async function loginAdmin(){
+  const er=document.getElementById('loginError');
+  er.textContent='';
+
+  if(!fb){
+    er.textContent='Firebase is not connected yet.';
+    return;
+  }
+
+  try{
+    const c=await fb.signInWithEmailAndPassword(
+      fb.auth,
+      document.getElementById('adminEmail').value.trim(),
+      document.getElementById('adminPassword').value
+    );
+
+    if(!(await isAdmin(c.user.uid))){
+      await fb.signOut(fb.auth);
+      er.textContent=
+        'This account is not registered as a CVLPC administrator.';
+      return;
+    }
+
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('adminBox').style.display='block';
+
+    await renderAdmin();
+
+  }catch(e){
+    console.error('Admin login error:',e);
+    er.textContent=
+      'Login failed. Check the email and password.';
+  }
+}
+
+async function logoutAdmin(){
+  if(fb) await fb.signOut(fb.auth);
+
+  document.getElementById('loginBox').style.display='block';
+  document.getElementById('adminBox').style.display='none';
+}
+
+async function renderAdmin(){
+  const box=document.getElementById('adminList');
+  box.innerHTML='<p>Loading reservations...</p>';
+
+  try{
+    const snap=await fb.getDocs(
+      fb.query(
+        fb.collection(fb.db,'reservations'),
+        fb.limit(200)
+      )
+    );
+
+    const rows=snap.docs
+      .map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>
+        (a.date||'').localeCompare(b.date||'') ||
+        (a.time||'').localeCompare(b.time||'')
+      );
+
+    if(!rows.length){
+      box.innerHTML='<p>No reservation requests yet.</p>';
+      return;
+    }
+
+    box.innerHTML=rows.map(x=>`
+      <div class="admin-row">
+        <div>
+          <b>${esc(x.name)}</b><br>
+          <small>${esc(x.email)} · ${esc(x.phone)}</small><br>
+          <small>${esc(x.date)} · ${esc(x.time)} · ${esc(x.players)} players</small><br>
+          <span class="badge ${String(x.status).toLowerCase()}">
+            ${esc(x.status)}
+          </span>
+        </div>
+
+        <div>
+          ${
+            ['Pending','pending'].includes(String(x.status))
+            ? `
+              <button
+                class="small"
+                style="background:#e4f5cf;color:#386400"
+                onclick="setStatus('${x.id}','Confirmed')">
+                CONFIRM
+              </button>
+
+              <button
+                class="small"
+                style="background:#fde5e2;color:#8a382f"
+                onclick="setStatus('${x.id}','Declined')">
+                DECLINE
+              </button>
+            `
+            :''
+          }
+        </div>
+      </div>
+    `).join('');
+
+  }catch(e){
+    console.error('Admin reservation error:',e);
+    box.innerHTML=
+      '<p>Unable to load reservations. Check Firebase rules.</p>';
+  }
+}
+
+async function setStatus(id,status){
+  try{
+    const snap=await fb.getDoc(
+      fb.doc(fb.db,'reservations',id)
+    );
+
+    if(!snap.exists()) return;
+
+    const x=snap.data();
+
+    if(status==='Confirmed'){
+      const q=await fb.getDocs(
+        fb.query(
+          fb.collection(fb.db,'reservations'),
+          fb.where('status','in',['Confirmed','confirmed']),
+          fb.limit(200)
+        )
+      );
+
+      if(q.docs.some(d=>
+        d.id!==id &&
+        d.data().date===x.date &&
+        d.data().time===x.time
+      )){
+        alert(
+          'Another confirmed reservation already uses this time slot.'
+        );
+        return;
+      }
+    }
+
+    const batch=fb.writeBatch(fb.db);
+
+    const reservationRef=fb.doc(
+      fb.db,'reservations',id
+    );
+
+    const publicRef=fb.doc(
+      fb.db,'publicBookings',id
+    );
+
+    const reservationUpdate={
+      status,
+      approvedAt:status==='Confirmed'?fb.serverTimestamp():null,
+      rejectedAt:status==='Declined'?fb.serverTimestamp():null,
+      updatedAt:fb.serverTimestamp()
+    };
+
+    const publicUpdate={
+      status,
+      updatedAt:fb.serverTimestamp()
+    };
+
+    batch.update(reservationRef,reservationUpdate);
+    batch.update(publicRef,publicUpdate);
+
+    await batch.commit();
+
+    await renderAdmin();
+    await refreshBookings();
+
+  }catch(e){
+    console.error('Status update error:',e);
+    alert(
+      'Unable to update reservation. Check Firebase rules.'
+    );
+  }
+}
+
 initFirebase();
 </script>
 </body></html>

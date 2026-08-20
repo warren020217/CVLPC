@@ -1,6 +1,8 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
+
     function isAdmin() {
       return request.auth != null &&
         exists(/databases/$(database)/documents/admins/$(request.auth.uid)) &&
@@ -12,29 +14,90 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    /*
+      PRIVATE RESERVATIONS
+      Contains player name, email and phone.
+      Public users can only create a Pending reservation and retrieve
+      their own reservation by its 8-character access-code document ID.
+      Administrators can read and update all reservations.
+    */
     match /reservations/{reservationId} {
+
       allow create: if
         request.resource.data.status == 'Pending' &&
-        request.resource.data.name is string && request.resource.data.name.size() >= 2 &&
-        request.resource.data.email is string && request.resource.data.email.size() >= 5 &&
-        request.resource.data.phone is string && request.resource.data.phone.size() >= 7 &&
-        request.resource.data.date is string && request.resource.data.time is string &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() >= 2 &&
+        request.resource.data.email is string &&
+        request.resource.data.email.size() >= 5 &&
+        request.resource.data.phone is string &&
+        request.resource.data.phone.size() >= 7 &&
+        request.resource.data.date is string &&
+        request.resource.data.time is string &&
         request.resource.data.players is string &&
-        request.resource.data.accessCode is string && request.resource.data.accessCode.size() == 8 &&
+        request.resource.data.accessCode is string &&
+        request.resource.data.accessCode.size() == 8 &&
         reservationId == request.resource.data.accessCode;
 
-      // Players can view their own reservation by access code.
-      // The public booking board may list only Pending or Confirmed reservations.
       allow get: if isAdmin() ||
-        resource.data.status in ['Pending','pending','Confirmed','confirmed'] &&
-        (resource.data.accessCode == reservationId || isAdmin());
+        (
+          resource.data.accessCode == reservationId &&
+          resource.data.status in [
+            'Pending','pending',
+            'Confirmed','confirmed',
+            'Declined','declined',
+            'Cancelled','cancelled',
+            'Completed','completed'
+          ]
+        );
 
-      allow list: if isAdmin() ||
-        resource.data.status in ['Pending','pending','Confirmed','confirmed'];
+      allow list: if isAdmin();
 
       allow update: if isAdmin() &&
         request.resource.data.diff(resource.data).affectedKeys()
-          .hasOnly(['status','approvedAt','rejectedAt','adminNote','updatedAt']);
+          .hasOnly([
+            'status',
+            'approvedAt',
+            'rejectedAt',
+            'adminNote',
+            'updatedAt'
+          ]);
+
+      allow delete: if isAdmin();
+    }
+
+    /*
+      PUBLIC BOOKINGS
+      Contains NO player name, email or phone.
+      This is the only collection read by the public BOOKINGS panel.
+    */
+    match /publicBookings/{bookingId} {
+
+      allow read: if true;
+
+      /*
+        The public booking document may only be created together with
+        its matching private reservation in the same atomic batch.
+      */
+      allow create: if
+        request.resource.data.status == 'Pending' &&
+        request.resource.data.accessCode == bookingId &&
+        request.resource.data.date is string &&
+        request.resource.data.time is string &&
+        request.resource.data.players is string &&
+        request.resource.data.reservationNo is string &&
+        getAfter(
+          /databases/$(database)/documents/reservations/$(bookingId)
+        ).data.status == 'Pending' &&
+        getAfter(
+          /databases/$(database)/documents/reservations/$(bookingId)
+        ).data.accessCode == bookingId;
+
+      allow update: if isAdmin() &&
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly([
+            'status',
+            'updatedAt'
+          ]);
 
       allow delete: if isAdmin();
     }
